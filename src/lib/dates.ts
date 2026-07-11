@@ -1,5 +1,11 @@
+// Uses local calendar-date components, not toISOString() (which is UTC and
+// would show tomorrow's date for hours each evening in negative-UTC-offset
+// timezones like Central America).
 export function toISODate(d: Date): string {
-  return d.toISOString().slice(0, 10);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export function todayISO(): string {

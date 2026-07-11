@@ -96,8 +96,12 @@ export default function HomePage() {
     });
   }
 
-  async function increaseReadingTarget() {
-    const res = await fetch("/api/settings/reading-target", { method: "POST" });
+  async function adjustReadingTarget(direction: "increase" | "decrease") {
+    const res = await fetch("/api/settings/reading-target", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ direction }),
+    });
     const data = await res.json();
     setDay((prev) =>
       prev
@@ -158,7 +162,15 @@ export default function HomePage() {
                           <span>{readingTarget}m target</span>
                           <button
                             type="button"
-                            onClick={increaseReadingTarget}
+                            onClick={() => adjustReadingTarget("decrease")}
+                            disabled={readingTarget <= 5}
+                            className="rounded border border-line px-1.5 py-0.5 hover:border-pine hover:text-pine disabled:opacity-40"
+                          >
+                            -5
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => adjustReadingTarget("increase")}
                             className="rounded border border-line px-1.5 py-0.5 hover:border-pine hover:text-pine"
                           >
                             +5

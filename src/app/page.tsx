@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   visibleHabits,
   behaviorFor,
@@ -123,9 +124,17 @@ export default function HomePage() {
 
   return (
     <main className="mx-auto w-full max-w-xl flex-1 px-4 py-6">
-      <header className="mb-5">
-        <h1 className="font-serif text-3xl font-semibold text-ink">Habit Tracker</h1>
-        <p className="mt-1 font-mono text-sm text-ink/60">{formatDateLong(selectedDate)}</p>
+      <header className="mb-5 flex items-center justify-between">
+        <div>
+          <h1 className="font-serif text-3xl font-semibold text-ink">Habit Tracker</h1>
+          <p className="mt-1 font-mono text-sm text-ink/60">{formatDateLong(selectedDate)}</p>
+        </div>
+        <Link
+          href="/month"
+          className="rounded-md border border-line px-3 py-1.5 font-mono text-xs text-ink/70 hover:border-pine hover:text-pine"
+        >
+          Month view
+        </Link>
       </header>
 
       <WeekStrip selectedDate={selectedDate} onSelect={setSelectedDate} />

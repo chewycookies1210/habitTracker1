@@ -5,11 +5,14 @@ export const TIP_POOLS = {
     "Water bottle one: keep it closer than your phone tonight, so it's the easier reach tomorrow.",
     "15 minutes of reading is the whole goal right now, not the minimum. Don't let it creep up until it feels automatic.",
     "The phone-free window isn't about willpower — it's about not giving the loop a chance to start today.",
+    "Do the task you're most likely to avoid first, while the day's willpower is highest — everything after it feels easier by comparison.",
   ],
   midday: [
     "Second bottle before lunch — thirst often masquerades as a snack craving.",
     "If a scrolling urge hits, this is the bounded window: one intentional check, not an all-day rabbit hole.",
     "Ten minutes with course material today keeps momentum alive, even on a light day.",
+    "A third bottle by mid-afternoon keeps the energy dip from mimicking hunger — water before a snack.",
+    "Notice how many times you've reached for the phone this block. Each one is a chance to just set it back down instead of unlocking it.",
   ],
   evening: [
     "Phone-free wind-down starts now. The goal is a consistent night, not a perfect one.",

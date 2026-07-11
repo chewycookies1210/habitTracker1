@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Guide — Consistency & Growth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#23261F;
+    --paper:#EFE9DA;
+    --card:#FBF8F0;
+    --pine:#3E5641;
+    --pine-dark:#2A3C2D;
+    --rust:#A8502B;
+    --moss:#8C9C7A;
+    --line: rgba(35,38,31,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:0.35;
+    background-image:
+      repeating-radial-gradient(circle at 15% 20%, transparent 0, transparent 60px, var(--line) 61px, transparent 62px),
+      repeating-radial-gradient(circle at 85% 75%, transparent 0, transparent 90px, var(--line) 91px, transparent 92px);
+    z-index:0;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 28px 120px;position:relative;z-index:1;}
+
+  .back-link{
+    display:inline-block;margin-top:28px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;
+    color:var(--pine);text-decoration:none;letter-spacing:0.03em;
+  }
+  .back-link:hover{color:var(--pine-dark);text-decoration:underline;}
+
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;color:var(--ink);}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--rust);
+    font-weight:600;
+  }
+  p{margin:0 0 12px;}
+  .muted{color:rgba(35,38,31,0.68);}
+
+  /* HERO */
+  header.hero{
+    padding:24px 0 40px;
+    text-align:left;
+  }
+  header.hero .eyebrow{margin-bottom:14px;display:block;}
+  header.hero h1{
+    font-size:clamp(34px,5vw,54px);
+    line-height:1.05;
+    letter-spacing:-0.01em;
+    max-width:14ch;
+  }
+  header.hero .tag{
+    margin-top:18px;
+    max-width:56ch;
+    font-size:17px;
+    color:rgba(35,38,31,0.75);
+  }
+
+  /* TRAIL — week overview signature element */
+  .trail-section{padding:8px 0 56px;}
+  .trail-svg{width:100%;height:auto;display:block;}
+  .trail-caption{
+    display:flex;justify-content:space-between;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;color:rgba(35,38,31,0.55);
+    margin-top:6px;letter-spacing:0.04em;
+  }
+
+  /* SECTION SHELL */
+  section{padding:52px 0;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .section-head{margin-bottom:28px;}
+  .section-head h2{font-size:28px;margin-top:6px;}
+
+  /* PRINCIPLE CARDS */
+  .principle-grid{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:16px;
+  }
+  @media (max-width:640px){.principle-grid{grid-template-columns:1fr;}}
+  .principle{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:20px 22px;
+  }
+  .principle .num{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--pine);
+    font-size:12px;
+    font-weight:600;
+    margin-bottom:8px;
+    display:block;
+  }
+  .principle h3{font-size:17px;margin-bottom:8px;line-height:1.3;}
+  .principle p{font-size:14.5px;color:rgba(35,38,31,0.78);margin:0;}
+
+  /* HABIT TACTIC CARDS */
+  .habit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:800px){.habit-grid{grid-template-columns:1fr;}}
+  .habit-card{
+    background:var(--card);border:1px solid var(--line);border-radius:4px;
+    overflow:hidden;
+  }
+  .habit-card .head{
+    padding:16px 18px;
+    background:var(--pine-dark);
+    color:var(--paper);
+  }
+  .habit-card .head span{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;
+    text-transform:uppercase;opacity:0.8;
+  }
+  .habit-card .head h3{color:#fff;font-size:19px;margin-top:4px;}
+  .habit-card .body{padding:16px 18px;}
+  .tactic{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--line);}
+  .tactic:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .tactic .label{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--rust);
+    text-transform:uppercase;letter-spacing:0.06em;font-weight:600;display:block;margin-bottom:4px;
+  }
+  .tactic p{font-size:13.5px;margin:0;color:rgba(35,38,31,0.82);}
+
+  /* TABLES (gym / nutrition) */
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;text-transform:uppercase;letter-spacing:0.06em;
+    background:var(--pine);color:var(--paper);
+    text-align:left;padding:10px 12px;
+  }
+  td{padding:9px 12px;border-bottom:1px solid var(--line);}
+  tr:nth-child(even) td{background:rgba(140,156,122,0.08);}
+  .day-tables{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px;}
+  @media (max-width:800px){.day-tables{grid-template-columns:1fr;}}
+  .day-tables .day-block h3{
+    font-size:16px;margin-bottom:8px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .day-tables .day-block h3 .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--rust);display:inline-block;
+  }
+
+  .macro-strip{
+    display:flex;gap:12px;margin:20px 0;flex-wrap:wrap;
+  }
+  .macro-pill{
+    background:var(--pine-dark);color:var(--paper);
+    border-radius:100px;padding:8px 18px;
+    font-family:'IBM Plex Mono',monospace;font-size:13px;
+  }
+  .macro-pill b{color:#fff;}
+
+  .note-box{
+    background:rgba(168,80,43,0.08);
+    border-left:3px solid var(--rust);
+    padding:14px 18px;border-radius:2px;
+    font-size:14px;margin-top:16px;
+  }
+
+  /* TRACKER */
+  .tracker-wrap{overflow-x:auto;}
+  .tracker-table{min-width:640px;}
+  .tracker-table th, .tracker-table td{text-align:center;}
+  .tracker-table td:first-child, .tracker-table th:first-child{text-align:left;}
+  .tracker-table input[type=checkbox]{
+    width:18px;height:18px;accent-color:var(--pine);cursor:pointer;
+  }
+  .tracker-controls{
+    display:flex;justify-content:space-between;align-items:center;margin-top:14px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;
+  }
+  .tracker-controls button{
+    font-family:'IBM Plex Mono',monospace;
+    background:var(--pine);color:var(--paper);border:none;
+    padding:8px 16px;border-radius:3px;cursor:pointer;font-size:12px;
+    letter-spacing:0.03em;
+  }
+  .tracker-controls button:hover{background:var(--pine-dark);}
+  .tracker-status{color:rgba(35,38,31,0.55);}
+
+  footer{
+    padding:40px 0 0;
+    font-size:13px;color:rgba(35,38,31,0.55);
+    border-top:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back-link" href="/">&larr; Back to Habit Tracker</a>
+
+  <header class="hero">
+    <span class="eyebrow">Field guide · trail notes for the next 12 months</span>
+    <h1>Consistency is designed, not willed.</h1>
+    <p class="tag">The research, the tactics, and the reference data behind the plan — Instagram, smoking, and adult-content patterns included, no shame attached. The hourly schedule and phased plan are in the companion PDF.</p>
+  </header>
+
+  <div class="trail-section">
+    <svg class="trail-svg" viewBox="0 0 880 130" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20,90 C100,20 160,20 220,60 C280,100 340,110 400,55 C460,10 520,15 580,50 C640,90 700,95 760,45 C800,15 830,15 860,30"
+            fill="none" stroke="#8C9C7A" stroke-width="2" stroke-dasharray="1 9" stroke-linecap="round"/>
+      <!-- waypoints: Mon Tue Wed Thu Fri Sat Sun -->
+      <g font-family="IBM Plex Mono" font-size="11" fill="#23261F">
+        <circle cx="20" cy="90" r="7" fill="#A8502B"/><text x="20" y="115" text-anchor="middle">MON</text>
+        <circle cx="220" cy="60" r="6" fill="#3E5641"/><text x="220" y="118" text-anchor="middle">TUE</text>
+        <circle cx="400" cy="55" r="7" fill="#A8502B"/><text x="400" y="118" text-anchor="middle">WED</text>
+        <circle cx="580" cy="50" r="7" fill="#A8502B"/><text x="580" y="118" text-anchor="middle">THU</text>
+        <circle cx="760" cy="45" r="6" fill="#3E5641"/><text x="760" y="118" text-anchor="middle">FRI</text>
+        <circle cx="860" cy="30" r="5" fill="#8C9C7A"/><text x="860" y="20" text-anchor="middle">SAT/SUN</text>
+      </g>
+    </svg>
+    <div class="trail-caption"><span>work + university load, low to high</span><span>full route in the PDF</span></div>
+  </div>
+
+  <!-- PRINCIPLES -->
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">Part 1</span>
+      <h2>Why this works differently than "try harder"</h2>
+    </div>
+    <div class="principle-grid">
+      <div class="principle">
+        <span class="num">01</span>
+        <h3>Action comes before motivation</h3>
+        <p>Waiting to feel ready keeps the loop going. BJ Fogg's research on small habits shows the fix is shrinking the first step so far it doesn't need motivation at all.</p>
+      </div>
+      <div class="principle">
+        <span class="num">02</span>
+        <h3>If-then plans beat willpower</h3>
+        <p>Psychologist Peter Gollwitzer's studies on implementation intentions found specific "if X, then I do Y" plans get followed through far more than vague goals like "study more."</p>
+      </div>
+      <div class="principle">
+        <span class="num">03</span>
+        <h3>Environment beats self-control</h3>
+        <p>Willpower is unreliable and fades across the day. Friction is more reliable — make the good option one step closer, the bad option a few steps further.</p>
+      </div>
+      <div class="principle">
+        <span class="num">04</span>
+        <h3>Habits stack onto existing routines</h3>
+        <p>A new habit sticks better anchored to something already stable — "after I close my laptop, I put my phone in the other room" — than left floating and easy to forget.</p>
+      </div>
+      <div class="principle">
+        <span class="num">05</span>
+        <h3>Self-compassion beats self-criticism</h3>
+        <p>Kristin Neff's research on self-compassion found harsh self-talk after a lapse predicts more repetition, not less. Noticing and resetting works better than punishing.</p>
+      </div>
+      <div class="principle">
+        <span class="num">06</span>
+        <h3>Scrolling and adult content share a mechanism</h3>
+        <p>Both exploit variable-reward loops — the same unpredictable-timing mechanism that makes slot machines compelling. The fix is reducing entry points, not fighting it in the moment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HABIT TACTICS -->
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">Part 2</span>
+      <h2>Tactics for the three habits you named</h2>
+    </div>
+    <div class="habit-grid">
+      <div class="habit-card">
+        <div class="head"><span>Trigger: boredom, avoidance</span><h3>Instagram</h3></div>
+        <div class="body">
+          <div class="tactic"><span class="label">Add friction</span><p>Log out after every use, delete the app from the home screen, set a hard daily timer that locks instead of "remind me."</p></div>
+          <div class="tactic"><span class="label">Bounded window</span><p>One or two intentional windows a day (built into the schedule) rather than an all-or-nothing ban — bounded permission reduces the pull the rest of the day.</p></div>
+          <div class="tactic"><span class="label">Replacement</span><p>Keep your phone in another room during work/study blocks; keep a book or your gym bag visible as the easier reach.</p></div>
+        </div>
+      </div>
+      <div class="habit-card">
+        <div class="head"><span>Trigger: stress, habit cue</span><h3>Smoking</h3></div>
+        <div class="body">
+          <div class="tactic"><span class="label">Add friction</span><p>Buy one at a time, not a fresh pack when low. Keep it in a bag or car, not your pocket.</p></div>
+          <div class="tactic"><span class="label">If-then plan</span><p>"If I want one after a stressful call, I take a 5-minute walk first, then decide." Delay is often enough to break the automatic loop.</p></div>
+          <div class="tactic"><span class="label">Bigger step later</span><p>When ready to reduce or quit fully, loop in your doctor or psychologist — structured support outperforms solo willpower here.</p></div>
+        </div>
+      </div>
+      <div class="habit-card">
+        <div class="head"><span>Trigger: loneliness, downtime</span><h3>Adult content</h3></div>
+        <div class="body">
+          <div class="tactic"><span class="label">Add friction</span><p>A site/app blocker (e.g. a content filter or app like Cold Turkey) set up on a motivated day, so it's already there on the days you're not.</p></div>
+          <div class="tactic"><span class="label">Name the trigger</span><p>Loneliness, boredom, and procrastination-avoidance are the most common drivers — match the response to the actual trigger (call someone vs. start the task you're avoiding).</p></div>
+          <div class="tactic"><span class="label">No self-punishment</span><p>Track lapses as data, not failure. Bring the pattern to your psychologist once you have a couple weeks of real frequency/trigger notes.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="note-box">Four triggers show up across all three habits: boredom, stress, loneliness, procrastination-avoidance. Naming which one is driving a given urge is what makes the matched response actually work.</div>
+  </section>
+
+  <!-- GYM DATA -->
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">Part 3 · reference data</span>
+      <h2>Training program (full body, 3x/week)</h2>
+      <p class="muted" style="margin-top:8px;font-size:14.5px;max-width:62ch;">Based on InBody scan (07.06.2026): 72.6kg, 15.6% body fat, 34.8kg skeletal muscle mass, InBody score 86. Full-body was chosen over a split because at 3 sessions/week, each muscle needs 2x/week frequency for best hypertrophy — a 3-day split only hits each muscle once. Rotate A/B/C each session. Rest 2–3 min on compounds, 60–90s on accessories.</p>
+    </div>
+
+    <div class="day-tables">
+      <div class="day-block">
+        <h3><span class="dot"></span>Day A</h3>
+        <table>
+          <tr><th>Exercise</th><th>Sets</th></tr>
+          <tr><td>Back Squat</td><td>4×6–8</td></tr>
+          <tr><td>Flat Bench Press</td><td>4×6–8</td></tr>
+          <tr><td>Barbell Row</td><td>3×8–10</td></tr>
+          <tr><td>Romanian Deadlift</td><td>3×8–10</td></tr>
+          <tr><td>Lateral Raise</td><td>3×12–15</td></tr>
+          <tr><td>Barbell Curl</td><td>3×10–12</td></tr>
+          <tr><td>Triceps Pushdown</td><td>3×10–12</td></tr>
+          <tr><td>Weighted Plank</td><td>3×40–60s</td></tr>
+        </table>
+      </div>
+      <div class="day-block">
+        <h3><span class="dot"></span>Day B</h3>
+        <table>
+          <tr><th>Exercise</th><th>Sets</th></tr>
+          <tr><td>Conventional Deadlift</td><td>4×5</td></tr>
+          <tr><td>Overhead Press</td><td>4×6–8</td></tr>
+          <tr><td>Pull-up / Lat Pulldown</td><td>3×8–10</td></tr>
+          <tr><td>Leg Press</td><td>3×10–12</td></tr>
+          <tr><td>Leg Curl</td><td>3×10–12</td></tr>
+          <tr><td>Incline DB Press</td><td>3×10–12</td></tr>
+          <tr><td>Face Pull</td><td>3×12–15</td></tr>
+          <tr><td>Hanging Leg Raise</td><td>3×10–15</td></tr>
+        </table>
+      </div>
+      <div class="day-block">
+        <h3><span class="dot"></span>Day C</h3>
+        <table>
+          <tr><th>Exercise</th><th>Sets</th></tr>
+          <tr><td>Front Squat</td><td>4×8</td></tr>
+          <tr><td>Seated Cable Row</td><td>3×10–12</td></tr>
+          <tr><td>Bulgarian Split Squat</td><td>3×10/leg</td></tr>
+          <tr><td>Arnold Press</td><td>3×10</td></tr>
+          <tr><td>Chest Fly</td><td>3×12–15</td></tr>
+          <tr><td>Hammer Curl</td><td>3×10–12</td></tr>
+          <tr><td>Overhead Tricep Ext.</td><td>3×10–12</td></tr>
+          <tr><td>Standing Calf Raise</td><td>4×12–15</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="note-box">Progression: add weight/reps once you hit the top of a rep range on all sets. Track bodyweight weekly at the same time/conditions — target +150–350g/week.</div>
+  </section>
+
+  <!-- NUTRITION DATA -->
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">Part 3 · reference data</span>
+      <h2>Nutrition targets</h2>
+    </div>
+    <div class="macro-strip">
+      <div class="macro-pill"><b>~2,900</b> kcal/day</div>
+      <div class="macro-pill"><b>150–160g</b> protein/day</div>
+      <div class="macro-pill"><b>+150–350g</b> target weekly gain</div>
+    </div>
+    <table>
+      <tr><th>Meal</th><th>Contents</th><th>Approx.</th></tr>
+      <tr><td>Breakfast</td><td>3 eggs, 2 slices bread, 1 tbsp peanut butter, coffee</td><td>465 kcal / 28g protein</td></tr>
+      <tr><td>Mid-morning</td><td>1 scoop protein shake, 1 banana</td><td>225 kcal / 26g protein</td></tr>
+      <tr><td>Lunch</td><td>1.5 cups rice, 1 cup black beans, 150g chicken/fish, 1 tbsp olive oil</td><td>895 kcal / 68g protein</td></tr>
+      <tr><td>Afternoon</td><td>1 cup oats, 1 cup plain yogurt, 1 piece fruit</td><td>510 kcal / 22g protein</td></tr>
+      <tr><td>Dinner</td><td>1 cup rice, 150g pork/fish, vegetables, 1 tbsp olive oil</td><td>510 kcal / 44g protein</td></tr>
+    </table>
+    <div class="note-box">Base total ≈ 2,600 kcal / 188g protein. Close the gap to 2,900 with ~300 kcal from familiar foods (extra egg, a handful of nuts, a larger rice portion). Supplements: creatine 5g/day (any time, consistency matters most), protein powder to fill gaps, magnesium for sleep/recovery, ashwagandha optional (mixed evidence). Weigh in weekly, same day/time — under 150g/week for 2 weeks straight, add ~150–200 kcal; over 350g/week for 2 weeks straight, cut ~150–200 kcal.</div>
+  </section>
+
+  <!-- TRACKER -->
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">Part 4</span>
+      <h2>Weekly check-in tracker</h2>
+      <p class="muted" style="margin-top:8px;font-size:14.5px;">Saved on this device automatically. Three checks a day — wake time hit, gym/study block done, phone-free first 45 minutes. That's it.</p>
+    </div>
+    <div class="tracker-wrap">
+      <table class="tracker-table" id="trackerTable">
+        <thead>
+          <tr><th>Day</th><th>Wake on time</th><th>Gym / study block</th><th>Phone-free 45min</th></tr>
+        </thead>
+        <tbody id="trackerBody"></tbody>
+      </table>
+    </div>
+    <div class="tracker-controls">
+      <span class="tracker-status" id="trackerStatus">loading…</span>
+      <button id="resetTracker">Reset this week</button>
+    </div>
+  </section>
+
+  <footer>
+    Companion document: the hourly weekly schedule and the phased 12-month plan are in the PDF. Bring the tracker data to your psychologist once you've got a couple of weeks logged — real patterns move a session further than general impressions do.
+  </footer>
+
+</div>
+
+<script>
+  const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const cols = ["wake","block","phonefree"];
+  const KEY = "tracker-week-v1";
+  let state = {};
+
+  function defaultState(){
+    const s = {};
+    days.forEach(d => { s[d] = {wake:false, block:false, phonefree:false}; });
+    return s;
+  }
+
+  function render(){
+    const body = document.getElementById("trackerBody");
+    body.innerHTML = "";
+    days.forEach(d => {
+      const row = document.createElement("tr");
+      let cells = `<td>${d}</td>`;
+      cols.forEach(c => {
+        const checked = state[d] && state[d][c] ? "checked" : "";
+        cells += `<td><input type="checkbox" data-day="${d}" data-col="${c}" ${checked}></td>`;
+      });
+      row.innerHTML = cells;
+      body.appendChild(row);
+    });
+    document.querySelectorAll('#trackerBody input[type=checkbox]').forEach(box => {
+      box.addEventListener('change', (e) => {
+        const d = e.target.getAttribute('data-day');
+        const c = e.target.getAttribute('data-col');
+        state[d][c] = e.target.checked;
+        save();
+      });
+    });
+  }
+
+  function save(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify(state));
+      document.getElementById("trackerStatus").textContent = "saved";
+    }catch(err){
+      document.getElementById("trackerStatus").textContent = "couldn't save (in-memory only this session)";
+    }
+  }
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(KEY);
+      state = raw ? JSON.parse(raw) : defaultState();
+    }catch(err){
+      state = defaultState();
+    }
+    document.getElementById("trackerStatus").textContent = "up to date";
+    render();
+  }
+
+  document.getElementById("resetTracker").addEventListener('click', () => {
+    state = defaultState();
+    render();
+    save();
+  });
+
+  load();
+</script>
+</body>
+</html>

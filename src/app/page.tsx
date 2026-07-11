@@ -148,12 +148,22 @@ export default function HomePage() {
           <h1 className="font-serif text-3xl font-semibold text-ink">Habit Tracker</h1>
           <p className="mt-1 font-mono text-sm text-ink/60">{formatDateLong(selectedDate)}</p>
         </div>
-        <Link
-          href="/month"
-          className="rounded-md border border-line px-3 py-1.5 font-mono text-xs text-ink/70 hover:border-pine hover:text-pine"
-        >
-          Month view
-        </Link>
+        <div className="flex gap-2">
+          <a
+            href="/field-guide.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md border border-line px-3 py-1.5 font-mono text-xs text-ink/70 hover:border-pine hover:text-pine"
+          >
+            Field Guide
+          </a>
+          <Link
+            href="/month"
+            className="rounded-md border border-line px-3 py-1.5 font-mono text-xs text-ink/70 hover:border-pine hover:text-pine"
+          >
+            Month view
+          </Link>
+        </div>
       </header>
 
       <WeekStrip selectedDate={selectedDate} onSelect={setSelectedDate} />

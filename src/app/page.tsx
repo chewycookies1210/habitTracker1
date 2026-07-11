@@ -1,65 +1,182 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useMemo, useState } from "react";
+import {
+  visibleHabits,
+  behaviorFor,
+  dayTypeFor,
+  isUniversityClassDay,
+} from "@/lib/habits";
+import { randomTip, TipPoolName } from "@/lib/tips";
+import { todayISO, formatDateLong } from "@/lib/dates";
+import { WeekStrip } from "@/components/WeekStrip";
+import { HabitRow } from "@/components/HabitRow";
+
+type DayResponse = {
+  date: string;
+  checkins: Record<string, number>;
+  settings: Record<string, unknown>;
+};
+
+type StreaksResponse = {
+  trails: Record<string, boolean[]>;
+};
+
+function timeOfDayPool(): TipPoolName {
+  const hour = new Date().getHours();
+  if (hour < 11) return "morning";
+  if (hour < 17) return "midday";
+  return "evening";
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  non_negotiable: "Non-negotiables",
+  structured: "Structured",
+  bad: "Staying clear",
+};
+
+export default function HomePage() {
+  const [selectedDate, setSelectedDate] = useState(todayISO());
+  const [day, setDay] = useState<DayResponse | null>(null);
+  const [trails, setTrails] = useState<StreaksResponse["trails"]>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [bannerTip, setBannerTip] = useState("");
+
+  // Picked client-side only (after mount) since it's randomized and would
+  // otherwise mismatch between the server-rendered and hydrated markup.
+  useEffect(() => {
+    setBannerTip(randomTip(timeOfDayPool()));
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    Promise.all([
+      fetch(`/api/day?date=${selectedDate}`).then((r) => r.json()),
+      fetch(`/api/streaks?date=${selectedDate}`).then((r) => r.json()),
+    ])
+      .then(([dayRes, streaksRes]) => {
+        if (cancelled) return;
+        if (dayRes.error) {
+          setError(dayRes.error);
+          setDay(null);
+        } else {
+          setDay(dayRes);
+          setTrails(streaksRes.trails ?? {});
+        }
+        setLoading(false);
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setError(String(e));
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDate]);
+
+  const dayType = useMemo(() => dayTypeFor(new Date(`${selectedDate}T00:00:00`)), [selectedDate]);
+  const habits = useMemo(() => visibleHabits(dayType), [dayType]);
+  const isClassDay = useMemo(
+    () => isUniversityClassDay(new Date(`${selectedDate}T00:00:00`)),
+    [selectedDate]
+  );
+
+  async function setValue(habitId: string, value: number) {
+    setDay((prev) =>
+      prev ? { ...prev, checkins: { ...prev.checkins, [habitId]: value } } : prev
+    );
+    await fetch("/api/checkins", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ habitId, date: selectedDate, value }),
+    });
+  }
+
+  async function increaseReadingTarget() {
+    const res = await fetch("/api/settings/reading-target", { method: "POST" });
+    const data = await res.json();
+    setDay((prev) =>
+      prev
+        ? { ...prev, settings: { ...prev.settings, reading_target_minutes: data.reading_target_minutes } }
+        : prev
+    );
+  }
+
+  const readingTarget =
+    typeof day?.settings.reading_target_minutes === "number"
+      ? day.settings.reading_target_minutes
+      : 15;
+
+  const grouped = {
+    non_negotiable: habits.filter((h) => h.category === "non_negotiable"),
+    structured: habits.filter((h) => h.category === "structured"),
+    bad: habits.filter((h) => h.category === "bad"),
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="mx-auto w-full max-w-xl flex-1 px-4 py-6">
+      <header className="mb-5">
+        <h1 className="font-serif text-3xl font-semibold text-ink">Habit Tracker</h1>
+        <p className="mt-1 font-mono text-sm text-ink/60">{formatDateLong(selectedDate)}</p>
+      </header>
+
+      <WeekStrip selectedDate={selectedDate} onSelect={setSelectedDate} />
+
+      <div className="mt-4 rounded-lg border border-line bg-card px-4 py-3 text-sm leading-relaxed text-ink/80">
+        {bannerTip}
+      </div>
+
+      {error ? (
+        <p className="mt-8 text-center font-mono text-sm text-rust">{error}</p>
+      ) : loading || !day ? (
+        <p className="mt-8 text-center font-mono text-sm text-ink/40">Loading…</p>
+      ) : (
+        (["non_negotiable", "structured", "bad"] as const).map((category) => {
+          const items = grouped[category];
+          if (items.length === 0) return null;
+          return (
+            <section key={category} className="mt-6">
+              <h2 className="mb-1 font-mono text-xs uppercase tracking-wide text-ink/50">
+                {CATEGORY_LABELS[category]}
+              </h2>
+              <div className="rounded-lg border border-line bg-card px-4">
+                {items.map((habit) => (
+                  <HabitRow
+                    key={habit.id}
+                    habit={habit}
+                    value={day.checkins[habit.id] ?? 0}
+                    onChange={(v) => setValue(habit.id, v)}
+                    optional={behaviorFor(habit, dayType) === "optional"}
+                    streakTrail={category === "non_negotiable" ? trails[habit.id] : undefined}
+                    extra={
+                      habit.id === "reading" ? (
+                        <div className="flex items-center gap-2 font-mono text-xs text-ink/60">
+                          <span>{readingTarget}m target</span>
+                          <button
+                            type="button"
+                            onClick={increaseReadingTarget}
+                            className="rounded border border-line px-1.5 py-0.5 hover:border-pine hover:text-pine"
+                          >
+                            +5
+                          </button>
+                        </div>
+                      ) : habit.id === "university" && isClassDay ? (
+                        <span className="font-mono text-[10px] uppercase tracking-wide text-rust">
+                          class day
+                        </span>
+                      ) : undefined
+                    }
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })
+      )}
+    </main>
   );
 }

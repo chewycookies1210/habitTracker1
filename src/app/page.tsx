@@ -8,10 +8,12 @@ import {
   dayTypeFor,
   isUniversityClassDay,
 } from "@/lib/habits";
-import { randomTip, TipPoolName } from "@/lib/tips";
+import { randomTip, currentTipPool, TipPoolName } from "@/lib/tips";
 import { todayISO, formatDateLong } from "@/lib/dates";
 import { WeekStrip } from "@/components/WeekStrip";
 import { HabitRow } from "@/components/HabitRow";
+import { AnalogClock } from "@/components/AnalogClock";
+import { MiniCalendar } from "@/components/MiniCalendar";
 
 type DayResponse = {
   date: string;
@@ -23,12 +25,10 @@ type StreaksResponse = {
   trails: Record<string, boolean[]>;
 };
 
-function timeOfDayPool(): TipPoolName {
-  const hour = new Date().getHours();
-  if (hour < 11) return "morning";
-  if (hour < 17) return "midday";
-  return "evening";
-}
+// How often the tip re-checks the clock and, if the pool changed (or enough
+// time has passed within the same pool), swaps in a fresh phrase.
+const TIP_CHECK_INTERVAL_MS = 60_000;
+const TIP_REFRESH_TICKS = 10; // ~10 minutes between refreshes within the same pool
 
 const CATEGORY_LABELS: Record<string, string> = {
   non_negotiable: "Non-negotiables",
@@ -43,11 +43,29 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [bannerTip, setBannerTip] = useState("");
+  const [tipPool, setTipPool] = useState<TipPoolName | null>(null);
 
   // Picked client-side only (after mount) since it's randomized and would
   // otherwise mismatch between the server-rendered and hydrated markup.
+  // Re-checks the clock every minute: switches pools immediately when the
+  // hour/day bucket changes (e.g. crossing into "after 10pm"), and also
+  // rotates to a new phrase within the same pool every ~10 minutes so the
+  // banner doesn't go stale during a long stretch in one bucket.
   useEffect(() => {
-    setBannerTip(randomTip(timeOfDayPool()));
+    let ticks = 0;
+    function tick() {
+      const pool = currentTipPool(new Date());
+      setTipPool((prevPool) => {
+        if (pool !== prevPool || ticks % TIP_REFRESH_TICKS === 0) {
+          setBannerTip(randomTip(pool));
+        }
+        return pool;
+      });
+      ticks += 1;
+    }
+    tick();
+    const id = setInterval(tick, TIP_CHECK_INTERVAL_MS);
+    return () => clearInterval(id);
   }, []);
 
   useEffect(() => {
@@ -123,7 +141,8 @@ export default function HomePage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-xl flex-1 px-4 py-6">
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row lg:items-start">
+      <main className="w-full min-w-0 max-w-xl flex-1">
       <header className="mb-5 flex items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl font-semibold text-ink">Habit Tracker</h1>
@@ -198,6 +217,12 @@ export default function HomePage() {
           );
         })
       )}
-    </main>
+      </main>
+
+      <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-64">
+        <AnalogClock />
+        <MiniCalendar selectedDate={selectedDate} onSelect={setSelectedDate} />
+      </aside>
+    </div>
   );
 }

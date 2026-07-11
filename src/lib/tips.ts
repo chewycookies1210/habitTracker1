@@ -16,6 +16,12 @@ export const TIP_POOLS = {
     "Meditation doesn't need to be long to count — five slow breaths still counts as showing up.",
     "Bonus round: even a five-minute call to family or a friend moves today from fine to good.",
   ],
+  lateNight: [
+    "Past 10 now — start the night routine. Phone away, lights low, let tomorrow's morning routine start easy.",
+    "The version of you at sunrise will thank the version of you who heads to bed now instead of scrolling one more minute.",
+    "Wind-down, not shutdown: a few slow breaths, phone parked outside arm's reach, and call it a day.",
+    "Whatever's left on today's list can wait for tomorrow's non-negotiables. Rest is part of the routine too.",
+  ],
   lapse: [
     "A slip is data, not a verdict. What was happening right before it? Worth a note for Sunday's review.",
     "Self-criticism tends to fuel the next slip more than it prevents it. Notice, reset, move to the next block.",
@@ -32,6 +38,23 @@ export type TipPoolName = keyof typeof TIP_POOLS;
 export function randomTip(pool: TipPoolName): string {
   const options = TIP_POOLS[pool];
   return options[Math.floor(Math.random() * options.length)];
+}
+
+/**
+ * Picks the tip pool for right now, factoring in both hour and day of week
+ * (e.g. Sunday evening surfaces the weekly review pool instead of the
+ * generic evening one; anything from 10pm-5am surfaces the night-routine
+ * pool regardless of day).
+ */
+export function currentTipPool(date: Date): TipPoolName {
+  const hour = date.getHours();
+  const day = date.getDay(); // 0 = Sunday
+
+  if (hour >= 22 || hour < 5) return "lateNight";
+  if (day === 0 && hour >= 17 && hour < 21) return "sundayReview";
+  if (hour < 11) return "morning";
+  if (hour < 17) return "midday";
+  return "evening";
 }
 
 /** Per-habit contextual tip shown behind the inline tip icon in the table. */

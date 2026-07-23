@@ -7,10 +7,9 @@ import { NON_NEGOTIABLE_IDS } from "@/lib/habits";
 const SLOTS = [
   "weekday-morning",
   "weekday-midday",
-  "weekday-evening",
   "weekend-morning",
   "weekend-midday",
-  "weekend-evening",
+  "evening",
   "sunday-review",
   "nudge-check",
 ] as const;
@@ -29,9 +28,8 @@ async function composeMessage(slot: Slot): Promise<{ message: string; title: str
     case "weekday-midday":
     case "weekend-midday":
       return { title: "Midday", message: randomTip("midday") };
-    case "weekday-evening":
-    case "weekend-evening":
-      return { title: "Evening", message: randomTip("evening") };
+    case "evening":
+      return { title: "Wind-down", message: randomTip("evening") };
     case "sunday-review":
       return { title: "Weekly review", message: randomTip("sundayReview") };
     case "nudge-check": {
@@ -48,7 +46,12 @@ async function composeMessage(slot: Slot): Promise<{ message: string; title: str
       const allDone = NON_NEGOTIABLE_IDS.every((id) => doneIds.has(id));
       if (allDone) return null; // nothing to nudge about
 
-      return { title: "Gentle nudge", message: randomTip("lapse") };
+      // Last check of the night — pairs the self-compassion nudge with an
+      // explicit cue to actually go to sleep now, since nothing fires later.
+      return {
+        title: "Time for bed",
+        message: `${randomTip("lapse")} Close it out and get some sleep.`,
+      };
     }
   }
 }

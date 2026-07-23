@@ -4,16 +4,18 @@ name: Habit Tracker Notifications
 # so each schedule is the spec's local time (see habit-tracker spec section 7)
 # shifted forward 6 hours. Evening/nudge slots land after midnight UTC, which
 # is why their day-of-week fields are shifted forward by one day.
+# Minutes are nudged a few off :00/:30 (GitHub's documented high-congestion
+# marks) to reduce, though not eliminate, scheduling delay - GitHub Actions
+# cron is best-effort and can still run late under load.
 on:
   schedule:
     - cron: "45 12 * * 1-5" # weekday morning   (6:45am local, Mon-Fri)
     - cron: "0 19 * * 1-5"  # weekday midday    (1:00pm local, Mon-Fri)
-    - cron: "0 3 * * 2-6"   # weekday evening   (9:00pm local, Mon-Fri)
     - cron: "30 14 * * 0,6" # weekend morning   (8:30am local, Sat-Sun)
     - cron: "30 19 * * 0,6" # weekend midday    (1:30pm local, Sat-Sun)
-    - cron: "0 3 * * 0,1"   # weekend evening   (9:00pm local, Sat-Sun)
+    - cron: "33 4 * * *"    # evening wind-down (~10:30pm local, every day)
     - cron: "0 0 * * 1"     # sunday review     (6:00pm local, Sun)
-    - cron: "30 3 * * *"    # nudge check       (9:30pm local, every day)
+    - cron: "3 5 * * *"     # nudge / bedtime   (~11:00pm local, every day)
   workflow_dispatch:
     inputs:
       slot:
@@ -24,10 +26,9 @@ on:
         options:
           - weekday-morning
           - weekday-midday
-          - weekday-evening
           - weekend-morning
           - weekend-midday
-          - weekend-evening
+          - evening
           - sunday-review
           - nudge-check
 
@@ -41,12 +42,11 @@ jobs:
           case "${{ github.event.schedule }}" in
             "45 12 * * 1-5") echo "value=weekday-morning" >> "$GITHUB_OUTPUT" ;;
             "0 19 * * 1-5") echo "value=weekday-midday" >> "$GITHUB_OUTPUT" ;;
-            "0 3 * * 2-6") echo "value=weekday-evening" >> "$GITHUB_OUTPUT" ;;
             "30 14 * * 0,6") echo "value=weekend-morning" >> "$GITHUB_OUTPUT" ;;
             "30 19 * * 0,6") echo "value=weekend-midday" >> "$GITHUB_OUTPUT" ;;
-            "0 3 * * 0,1") echo "value=weekend-evening" >> "$GITHUB_OUTPUT" ;;
+            "33 4 * * *") echo "value=evening" >> "$GITHUB_OUTPUT" ;;
             "0 0 * * 1") echo "value=sunday-review" >> "$GITHUB_OUTPUT" ;;
-            "30 3 * * *") echo "value=nudge-check" >> "$GITHUB_OUTPUT" ;;
+            "3 5 * * *") echo "value=nudge-check" >> "$GITHUB_OUTPUT" ;;
             *) echo "value=${{ github.event.inputs.slot }}" >> "$GITHUB_OUTPUT" ;;
           esac
 

@@ -2,7 +2,7 @@ export const TIP_POOLS = {
   morning: [
     "Anchor it: right after you silence the alarm, start the routine before anything else touches your hands.",
     "If today feels heavy, shrink the routine to its smallest version. Showing up beats doing it perfectly.",
-    "Water bottle one: keep it closer than your phone tonight, so it's the easier reach tomorrow.",
+    "Water bottle one: pour it now, before the day gets going — the earliest habit is often the easiest to keep.",
     "15 minutes of reading is the whole goal right now, not the minimum. Don't let it creep up until it feels automatic.",
     "The phone-free window isn't about willpower — it's about not giving the loop a chance to start today.",
     "Do the task you're most likely to avoid first, while the day's willpower is highest — everything after it feels easier by comparison.",
@@ -13,11 +13,12 @@ export const TIP_POOLS = {
     "Ten minutes with course material today keeps momentum alive, even on a light day.",
     "A third bottle by mid-afternoon keeps the energy dip from mimicking hunger — water before a snack.",
     "Notice how many times you've reached for the phone this block. Each one is a chance to just set it back down instead of unlocking it.",
+    "Bonus round: even a five-minute call to family or a friend moves today from fine to good — a daytime call beats a late one.",
   ],
   evening: [
     "Phone-free wind-down starts now. The goal is a consistent night, not a perfect one.",
     "Meditation doesn't need to be long to count — five slow breaths still counts as showing up.",
-    "Bonus round: even a five-minute call to family or a friend moves today from fine to good.",
+    "Dim the lights and set tomorrow's water bottle by the bed — the environment does half the work of a good wind-down.",
   ],
   lateNight: [
     "Past 10 now — start the night routine. Phone away, lights low, let tomorrow's morning routine start easy.",
